@@ -1,0 +1,72 @@
+# Keeps the profile's pictures current: a new repository joins the running line by itself,
+# and an edit to projects.json shows up a minute after it is saved.
+#
+# Private repositories are seen only with the PROFILE_TOKEN secret: a fine-grained token
+# with read-only "Metadata" on all repositories. Without it the public ones still update
+# and the private ones already in build/repos.json stay.
+name: Profile
+
+on:
+  push:
+    branches: [main]
+    paths: ["projects.json", "build/**", ".github/workflows/profile.yml"]
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: profile
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - run: pip install -r build/requirements.txt
+
+      - name: List repositories
+        env:
+          PROFILE_TOKEN: ${{ secrets.PROFILE_TOKEN }}
+          REPO_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
+          FIELDS: ".[] | {name, description, language, private, fork, size, pushed_at, topics}"
+        run: |
+          RAW="$RUNNER_TEMP/raw.jsonl"
+          # a token that expired or was revoked falls back to the public list instead of failing
+          if [ -n "$PROFILE_TOKEN" ] && GH_TOKEN="$PROFILE_TOKEN" \
+              gh api --paginate "/user/repos?affiliation=owner&per_page=100" --jq "$FIELDS" > "$RAW"; then
+            python build/repos.py "$RAW"
+          else
+            if [ -n "$PROFILE_TOKEN" ]; then
+              echo "::warning::PROFILE_TOKEN did not work (expired?). Only public repositories were refreshed."
+            fi
+            GH_TOKEN="$REPO_TOKEN" gh api --paginate "/users/$OWNER/repos?type=owner&per_page=100" --jq "$FIELDS" > "$RAW"
+            python build/repos.py "$RAW" --public-only
+          fi
+
+      - run: python build/build.py
+
+      - run: python -m unittest discover -s build
+
+      - name: Commit what changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets build/repos.json
+          if git diff --cached --quiet; then
+            echo "The pictures are already current."
+          else
+            git commit -m "chore: refresh profile pictures"
+            git pull --rebase origin main
+            git push
+          fi

@@ -1,0 +1,34 @@
+{
+  "owner": "atomi7e",
+  "skip_empty": true,
+  "exclude": [
+    "edge-app",
+    "advanced_python_new"
+  ],
+  "projects": {
+    "edge": {
+      "name": "Edge",
+      "about": "Trading journal, calendar, notes, habits and money in one app"
+    },
+    "cargopass": {
+      "name": "CargoPass",
+      "about": "Safe import from China for small businesses in Kazakhstan"
+    },
+    "photocamera": {
+      "name": "Photocamera",
+      "about": "A camera coach: frames the subject and suggests the shot"
+    },
+    "ai_agent_manager_pet": {
+      "name": "AI Agent Manager",
+      "about": "A Telegram planner on Gemini: text, photos, voice, reminders"
+    },
+    "att-system_pet": {
+      "name": "Attendance system",
+      "about": "Class attendance on Django, with a REST API"
+    },
+    "advance-programming-python-": {
+      "name": "AITU coursework",
+      "about": "Weekly Python tasks and a first Django project"
+    }
+  }
+}

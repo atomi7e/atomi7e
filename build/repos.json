@@ -70,6 +70,16 @@
     "topics": []
   },
   {
+    "name": "cqa-hackathon",
+    "description": "Conversation Quality Analytics: прототип оценки диалогов для хакатона Freedom Broker",
+    "language": "Python",
+    "private": false,
+    "fork": false,
+    "size": 1,
+    "pushed_at": "2026-11-07",
+    "topics": []
+  },
+  {
     "name": "edge",
     "description": null,
     "language": "Python",

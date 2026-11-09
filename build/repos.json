@@ -36,7 +36,7 @@
     "private": false,
     "fork": false,
     "size": 1,
-    "pushed_at": "2026-02-08",
+    "pushed_at": "2026-11-09",
     "topics": []
   },
   {
@@ -67,16 +67,6 @@
     "fork": false,
     "size": 1,
     "pushed_at": "2026-11-02",
-    "topics": []
-  },
-  {
-    "name": "cqa-hackathon",
-    "description": "Conversation Quality Analytics: прототип оценки диалогов для хакатона Freedom Broker",
-    "language": "JavaScript",
-    "private": false,
-    "fork": false,
-    "size": 1,
-    "pushed_at": "2026-11-08",
     "topics": []
   },
   {
